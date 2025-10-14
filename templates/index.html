@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Fire Risk Prediction</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Full page background */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto Slab', Arial, sans-serif;
+            background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3kgIgzACFRXEZUfa7Yvp11c4Q50bR3rAvUA&s') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+
+        /* Heading */
+        h1 {
+            margin-top: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 1px 1px 5px #000;
+        }
+
+        /* Form container */
+        .form-container {
+            background: rgba(0,0,0,0.7);
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.5);
+            margin: 30px 0;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* Question label */
+        .question {
+            text-align: left;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Input and select fields */
+        input, select {
+            width: 100%;
+            height: 50px;
+            padding: 10px 15px;
+            margin: 5px 0 15px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        /* Submit button */
+        button {
+            background-color: #ff4500;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #e03e00;
+        }
+
+        /* Prediction result box styled like toggle/message */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif; /* Times New Roman font */
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
+            animation: fadeIn 0.5s ease-in-out;
+            border: 2px solid #fff;
+        }
+
+        /* High risk message */
+        .high-risk {
+            background-color: #ff4c4c;
+            color: #fff;
+            border-color: #ff1a1a;
+        }
+
+        /* Low risk message */
+        .low-risk {
+            background-color: #4caf50;
+            color: #fff;
+            border-color: #2e7d32;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        /* Responsive */
+        @media (max-width: 650px) {
+            .form-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>FOREST FIRE RISK PREDICTION</h1>
+
+    <div class="form-container">
+        <form action="/predict" method="POST">
+            <div class="question">1. X Coordinate:</div>
+            <input type="number" name="X" placeholder="Enter X" required step="0.1" min="0">
+
+            <div class="question">2. Y Coordinate:</div>
+            <input type="number" name="Y" placeholder="Enter Y" required step="0.1" min="0">
+
+            <div class="question">3. Month:</div>
+            <select name="month" required>
+                <option value="" disabled selected>Select Month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+
+            <div class="question">4. Day of Week:</div>
+            <select name="day" required>
+                <option value="" disabled selected>Select Day</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+                <option value="7">Sunday</option>
+            </select>
+
+            <div class="question">5. FFMC:</div>
+            <input type="number" name="FFMC" placeholder="Enter FFMC" required step="0.1" min="0">
+
+            <div class="question">6. DMC:</div>
+            <input type="number" name="DMC" placeholder="Enter DMC" required step="0.1" min="0">
+
+            <div class="question">7. DC:</div>
+            <input type="number" name="DC" placeholder="Enter DC" required step="0.1" min="0">
+
+            <div class="question">8. ISI:</div>
+            <input type="number" name="ISI" placeholder="Enter ISI" required step="0.1" min="0">
+
+            <div class="question">9. Temperature (°C):</div>
+            <input type="number" name="temp" placeholder="Enter Temperature" required step="0.1" min="-50" max="60">
+
+            <div class="question">10. Relative Humidity (%):</div>
+            <input type="number" name="RH" placeholder="Enter Humidity" required step="1" min="0" max="100">
+
+            <div class="question">11. Wind Speed (km/h):</div>
+            <input type="number" name="wind" placeholder="Enter Wind Speed" required step="0.1" min="0">
+
+            <div class="question">12. Rain (mm):</div>
+            <input type="number" name="rain" placeholder="Enter Rain" required step="0.1" min="0">
+
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result-box {% if prediction_text.startswith('🔥') %}high-risk{% else %}low-risk{% endif %}">
+                {{ prediction_text }}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
