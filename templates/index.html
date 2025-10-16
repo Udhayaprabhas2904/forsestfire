@@ -32,15 +32,15 @@
             text-align: center;
             text-transform: uppercase;
             color: #ffffff;
-            text-shadow: 1px 1px 5px #000;
+            text-shadow: 2px 2px 5px #000;
         }
 
         /* Form container */
         .form-container {
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             padding: 30px 40px;
             border-radius: 15px;
-            box-shadow: 0px 8px 20px rgba(0,0,0,0.5);
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.6);
             margin: 30px 0;
             width: 90%;
             max-width: 600px;
@@ -83,30 +83,30 @@
             background-color: #e03e00;
         }
 
-        /* Prediction result box styled like toggle/message */
+        /* Prediction result box */
         .result-box {
-            margin-top: 20px;
-            padding: 15px 20px;
+            margin-top: 25px;
+            padding: 20px 25px;
             border-radius: 12px;
-            font-size: 1.4em;
+            font-size: 1.3em;
             text-align: center;
             font-weight: bold;
-            font-family: 'Times New Roman', Times, serif; /* Times New Roman font */
+            font-family: 'Times New Roman', Times, serif;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
-            animation: fadeIn 0.5s ease-in-out;
             border: 2px solid #fff;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         /* High risk message */
         .high-risk {
-            background-color: #ff4c4c;
+            background-color: #b22222;  /* dark red */
             color: #fff;
             border-color: #ff1a1a;
         }
 
         /* Low risk message */
         .low-risk {
-            background-color: #4caf50;
+            background-color: #228B22;  /* forest green */
             color: #fff;
             border-color: #2e7d32;
         }
@@ -196,8 +196,8 @@
         </form>
 
         {% if prediction_text %}
-            <div class="result-box {% if prediction_text.startswith('🔥') %}high-risk{% else %}low-risk{% endif %}">
-                {{ prediction_text }}
+            <div class="result-box {{ color_class }}">
+                {{ prediction_text|safe }}
             </div>
         {% endif %}
     </div>
