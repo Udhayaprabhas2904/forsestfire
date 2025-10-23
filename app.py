@@ -2,12 +2,16 @@ from flask import Flask, render_template, request
 import pickle
 import numpy as np
 import pandas as pd
+import warnings
 
-app = Flask(_name_)
+# Suppress sklearn version mismatch warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+app = Flask(__name__)
 
 # Load model and scaler
-model = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\forest_fire_model (1).pkl', 'rb'))
-scaler = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\scaler.pkl', 'rb'))
+model = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\forest_fire_model (2).pkl', 'rb'))
+scaler = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\scaler (1).pkl', 'rb'))
 
 @app.route('/')
 def home():
@@ -49,7 +53,7 @@ def predict():
                 f"WARNING: HIGH FIRE RISK ({probability:.2f}%)<br>"
                 "Your forest is in danger!<br>"
                 "Take preventive measures immediately.<br>"
-                "Ensure humidity levels are maintained and fire control units are alert."
+                "Maintain moisture and stay alert."
             )
             color_class = "high-risk"
         else:
@@ -66,5 +70,5 @@ def predict():
         return render_template('index.html', prediction_text=f"Error: {e}", color_class="high-risk")
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     app.run(debug=True)
