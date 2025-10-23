@@ -2,58 +2,37 @@ from flask import Flask, render_template, request
 import pickle
 import numpy as np
 import pandas as pd
-import os
 
-app = Flask(__name__)
+app = Flask(_name_)
 
-# ---------- Load model and scaler safely ----------
-# Use relative paths so it works both locally and on Render
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'forest_fire_model.pkl')
-SCALER_PATH = os.path.join(os.path.dirname(__file__), 'scaler.pkl')
-
-try:
-    with open(MODEL_PATH, 'rb') as model_file:
-        model = pickle.load(model_file)
-    with open(SCALER_PATH, 'rb') as scaler_file:
-        scaler = pickle.load(scaler_file)
-except Exception as e:
-    model = None
-    scaler = None
-    print("Error loading model or scaler:", e)
-
+# Load model and scaler
+model = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\forest_fire_model (1).pkl', 'rb'))
+scaler = pickle.load(open('C:\\Users\\user\\Desktop\\forestfire_project\\scaler.pkl', 'rb'))
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-
 @app.route('/predict', methods=['POST'])
 def predict():
-    if not model or not scaler:
-        return render_template('index.html', prediction_text="Model or scaler not loaded!", color_class="high-risk")
-
     try:
         # Feature order must exactly match training
         features = ['X', 'Y', 'month', 'day', 'FFMC', 'DMC', 'DC', 'ISI', 'temp', 'RH', 'wind', 'rain']
 
-        # Ensure all inputs exist and are numeric
-        input_values = []
-        for feat in features:
-            value = request.form.get(feat)
-            if value is None or value.strip() == "":
-                raise ValueError(f"Missing value for {feat}")
-            input_values.append(float(value))
+        # Collect input values from form
+        input_values = [float(request.form[feat]) for feat in features]
+        input_data = np.array([input_values])
 
         # Convert to DataFrame to match scaler feature names
-        input_df = pd.DataFrame([input_values], columns=features)
+        input_df = pd.DataFrame(input_data, columns=features)
 
         # Apply scaling
         input_scaled = scaler.transform(input_df)
 
-        # Predict
+        # Make prediction
         prediction = model.predict(input_scaled)[0]
 
-        # Get probability if available
+        # Probability (if model supports)
         try:
             probabilities = model.predict_proba(input_scaled)[0]
             classes = model.classes_
@@ -67,7 +46,7 @@ def predict():
 
         if prediction in high_labels:
             result_text = (
-                f"⚠️ WARNING: HIGH FIRE RISK ({probability:.2f}%)<br>"
+                f"WARNING: HIGH FIRE RISK ({probability:.2f}%)<br>"
                 "Your forest is in danger!<br>"
                 "Take preventive measures immediately.<br>"
                 "Ensure humidity levels are maintained and fire control units are alert."
@@ -75,7 +54,7 @@ def predict():
             color_class = "high-risk"
         else:
             result_text = (
-                f"✅ LOW FIRE RISK ({probability:.2f}%)<br>"
+                f"LOW FIRE RISK ({probability:.2f}%)<br>"
                 "Your forest is safe and the chance of fire is minimal.<br>"
                 "Weather conditions appear stable with no major fire threat."
             )
@@ -87,9 +66,5 @@ def predict():
         return render_template('index.html', prediction_text=f"Error: {e}", color_class="high-risk")
 
 
-# ---------- Main entry ----------
-if __name__ == "__main__":
-    # Get PORT from environment (Render gives it automatically)
-    port = int(os.environ.get("PORT", 5000))
-    # Turn off debug for production
-    app.run(host="0.0.0.0", port=port, debug=False)
+if _name_ == "_main_":
+    app.run(debug=True)
